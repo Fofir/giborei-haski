@@ -204,6 +204,16 @@ def build(photo):
     return img
 
 
+def social(title):
+    """1200x630 link-preview image (WhatsApp / Facebook / X): the title art plus a call to action."""
+    art = title.copy()
+    cta = pixel_text('PLAY IN YOUR BROWSER!', '#ffe08a')
+    art.alpha_composite(cta, (W // 2 - cta.width // 2, 184))
+    big = art.resize((1200, round(H * 1200 / W)), Image.NEAREST)
+    top = (big.height - 630) // 2 + 6  # keep a little more sky than snow
+    return big.crop((0, top, 1200, top + 630)).convert('RGB')
+
+
 if __name__ == '__main__':
     title = build(sys.argv[1])
     title.save(IMG + 'Title.png')
@@ -212,6 +222,7 @@ if __name__ == '__main__':
     # the loader can't use the pixel font yet (it's still loading), so its text is baked too
     pixel_text('LOADING', '#ffffff').save(IMG + 'Loader_Loading.png')
     pixel_text('CLICK TO START', '#ffe08a').save(IMG + 'Loader_Click.png')
+    social(title).save('social.jpg', quality=90)
     if len(sys.argv) > 2:
         prev = title.copy()
         prev.alpha_composite(press, (W // 2 - press.width // 2, 188))
